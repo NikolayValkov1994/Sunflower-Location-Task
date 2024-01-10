@@ -30,7 +30,8 @@ function App() {
 		const timer = setInterval(() => {
 			navigator.geolocation.getCurrentPosition(
 				getLocationSuccessfully,
-				getLocationIssue
+				getLocationIssue,
+				{ enableHighAccuracy: true }
 			);
 		}, 1000);
 
@@ -39,15 +40,15 @@ function App() {
 		};
 	}, []);
 
+	const handledLog = error?.message
+		? error.message
+		: loading
+		? "Loading..."
+		: "long: " + long + " | " + "Lang: " + lat;
+
 	return (
 		<div className="App">
-			<h1>
-				{error?.message
-					? error.message
-					: loading
-					? "Loading..."
-					: "long: " + long + " | " + "Lang: " + lat}
-			</h1>
+			<h1>{handledLog}</h1>
 		</div>
 	);
 }
