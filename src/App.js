@@ -1,54 +1,24 @@
-import { useEffect, useState } from "react";
 import "./App.css";
+import useMyLocation from "./hooks/useMyLocation";
 
 function App() {
-	const [long, setLong] = useState();
-	const [lat, setLat] = useState();
-	const [error, setError] = useState({ message: null });
-
-	const loading = !long || !lat ? true : false;
-
-	const setCoordinates = (long, lat) => {
-		setLong(long);
-		setLat(lat);
-	};
-
-	const getLocationSuccessfully = (position) => {
-		const freshLong = position.coords.longitude.toFixed(7);
-		const freshLat = position.coords.latitude.toFixed(7);
-
-		if (freshLong !== long || freshLat !== lat) {
-			setCoordinates(freshLong, freshLat);
-		}
-	};
-
-	const getLocationIssue = (e) => {
-		setError(e);
-	};
-
-	useEffect(() => {
-		const timer = setInterval(() => {
-			navigator.geolocation.getCurrentPosition(
-				getLocationSuccessfully,
-				getLocationIssue,
-				{ enableHighAccuracy: true }
-			);
-		}, 1000);
-
-		return () => {
-			clearInterval(timer);
-		};
-	}, []);
-
-	const handledLog = error?.message
-		? error.message
-		: loading
-		? "Loading..."
-		: "long: " + long + " | " + "Lang: " + lat;
+	//useMyLocation returns location info, error and loading state
+	const { locationInfo, error, loading } = useMyLocation();
 
 	return (
 		<div className="App">
-			<h1>{handledLog}</h1>
+			{loading ? (
+				<h1>Loading...</h1>
+			) : error?.message === "" ? (
+				<div>
+					<h1>
+						<strong>{"Lat: " + locationInfo.lat}</strong>
+						<strong>{"Lon: " + locationInfo.lon}</strong>
+					</h1>
+				</div>
+			) : (
+				<h1>{error.message}</h1>
+			)}
 		</div>
 	);
 }
